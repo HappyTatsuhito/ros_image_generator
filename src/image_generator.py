@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 
-import rospy
+import sys
 import cv2
+import rospy
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 import numpy as np
+
+###
+COLOR_PATH = "/home/tatsuhito/pd3/dataset/cupboard/"
+DEPTH_PATH = "/home/tatsuhito/pd3/dataset/cupboard"
+###
 
 class ImageGenerator(object):
     def __init__(self):
@@ -13,7 +19,7 @@ class ImageGenerator(object):
         rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.depthImageCB)
         self.ros_image = Image()
         self.ros_depth_image = Image()
-        self.count = 258
+        self.count = 0
 
     def imageCB(self,image):
         self.ros_image = image
@@ -35,8 +41,8 @@ class ImageGenerator(object):
             depth_array = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
             depth_image = np.array(depth_array, dtype=np.float32)
             depth_image = depth_image/1500.0*255
-            cv2.imwrite("/home/tatsuhito/pd3/bikkle-milk_tea/temporary_color_images/color_image_1_" + str(self.count) + ".png", color_image)
-            cv2.imwrite("/home/tatsuhito/pd3/bikkle-milk_tea/temporary_depth_images/depth_image_1_" + str(self.count) + ".png", depth_image)
+            cv2.imwrite(COLOR_PATH + "color_image_" + str(self.count) + ".png", color_image)
+            cv2.imwrite(DEPTH_PATH + "depth_image_" + str(self.count) + ".png", depth_image)
             self.viewImage(depth_image/255)
             self.count += 1
         except CvBridgeError, e:
