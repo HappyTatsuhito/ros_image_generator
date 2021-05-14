@@ -10,23 +10,30 @@ import numpy as np
 sys.path.insert(0, "/usr/local/lib/python3.6/dist-packages/")
 from labelme.utils import shape as label_shape
 
-#reference_path = "/home/tatsuhito/pd3/dataset/new_data/"
-reference_path = "/home/tatsuhito/pd3/segmentation_data/dataset/store/"
-current_path = "/home/tatsuhito/pd3/dataset/unknown_object-unknown/spare_color_images/"
-#destination_path = "/home/tatsuhito/pd3/dataset/unknown_object-unknown/"
-destination_path = "/home/tatsuhito/pd3/segmentation_data/dataset/store/"
-    
+LOCATION_LIST = ["table", "shelf", "cupboard", "desk"]
+OBJECT_LIST = ["bikkle", "cup_noodle", "milk_tea", "pringles", "primitive", "potelong", "coffee", "cape", "unknowns"]
+#==============================#
+LOCATION_NAME = LOCATION_LIST[2]
+OBJECT_NAME = OBJECT_LIST[8]
+COUNT = 0
+#==============================#
+
 def alikeFileGenerator():
+    reference_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/depth_images/"
+    current_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/spare_color_images/"
+    destination_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/color_images/"
+    
     for file_name in os.listdir(reference_path):
         name_list = file_name.split("_")
         file_number = name_list[-1].split(".")
         file_number = file_number[0]
         os.system("mv " + current_path + "color_image_" + file_number + ".png " + destination_path)
         
-    print "finish"
-
 
 def generateJson():
+    reference_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/color_images/"
+    destination_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/depth_images/"
+    
     for file_name in os.listdir(reference_path):
         name_list = file_name.split("_")
         file_extension = name_list[-1].split(".")[1]
@@ -50,6 +57,10 @@ def generateJson():
 
             
 def generateMask():
+    reference_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/depth_images/"
+    destination_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME + "/mask_images/"
+    
+    
     for file_name in os.listdir(reference_path):
         name_list = file_name.split("_")
         file_extension = name_list[-1].split(".")[1]
@@ -105,33 +116,39 @@ def generateMask():
         
 
 def createDataset():
-    count = 0
-    for file_name in os.listdir(reference_path + "depth_images/"):
+    reference_path = "/home/tatsuhito/pd3/dataset/" + LOCATION_NAME + "/" + OBJECT_NAME
+    destination_path = "/home/tatsuhito/pd3/segmentation_data/dataset/store/"
+
+    global COUNT
+    for file_name in os.listdir(reference_path + "/depth_images/"):
         name_list = file_name.split("_")
         file_extension = name_list[-1].split(".")[1]
         
         if file_extension == "json":
             continue
 
-        left_image_path = destination_path + "left_store/"
-        groundTruth_image_path = destination_path + "groundTruth_store/"
-        os.system("cp " + reference_path + "depth_images/" + file_name + " " + left_image_path + "left_image_" + str(count) + ".png")
-        os.system("cp " + reference_path + "mask_images/" + file_name + " " + groundTruth_image_path + "left_groundTruth_" + str(count) + ".png")
-        count += 1
+        left_image_path = destination_path + "/left_store/"
+        groundTruth_image_path = destination_path + "/groundTruth_store/"
+        os.system("cp " + reference_path + "/depth_images/" + file_name + " " + left_image_path + "left_image_" + str(COUNT) + ".png")
+        os.system("cp " + reference_path + "/mask_images/" + file_name + " " + groundTruth_image_path + "left_groundTruth_" + str(COUNT) + ".png")
+        COUNT += 1
 
+        
 def shuffleDataset():
-    file_list = os.listdir(reference_path + "left_store/")
+    destination_path = "/home/tatsuhito/pd3/segmentation_data/dataset/store/"
+
+    file_list = os.listdir(destination_path + "left_store/")
     shuffled_list = random.sample(file_list, len(file_list))
 
     count = 0
     for file_name in shuffled_list:
         # left_image
-        os.system("cp " + reference_path + "left_store/" + file_name + " " + destination_path + "left_images/left_image_" + str(count) + ".png")
+        os.system("cp " + destination_path + "left_store/" + file_name + " " + destination_path + "left_images/left_image_" + str(count) + ".png")
         
         # left_groundTruth
         file_number = file_name.split("_")[-1].split(".")[0]
         ground_file_name = "left_groundTruth_" + file_number + ".png"
-        os.system("cp " + reference_path + "groundTruth_store/" + ground_file_name + " " + destination_path + "left_groundTruth/left_groundTruth_" + str(count) + ".png")
+        os.system("cp " + destination_path + "groundTruth_store/" + ground_file_name + " " + destination_path + "left_groundTruth/left_groundTruth_" + str(count) + ".png")
         count += 1
         
 
@@ -141,6 +158,6 @@ if __name__ == '__main__':
     #generateJson()
     #generateMask()
     #createDataset()
-    #shuffleDataset()
-    print "ok"
+    shuffleDataset()
+    print "Finish"
     

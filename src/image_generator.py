@@ -9,17 +9,18 @@ from sensor_msgs.msg import Image
 import numpy as np
 
 ###
-COLOR_PATH = "/home/tatsuhito/pd3/dataset/cupboard/"
-DEPTH_PATH = "/home/tatsuhito/pd3/dataset/cupboard"
+SAVE_PATH = "/home/demulab/makino/invisible_marker_data"
+COLOR_PATH = "/rgb_imgs/"
+DEPTH_PATH = "/depth_imgs/"
 ###
 
 class ImageGenerator(object):
-    def __init__(self):
-        rospy.Subscriber("/camera/color/image_raw", Image, self.imageCB)
-        rospy.Subscriber("/camera/aligned_depth_to_color/image_raw", Image, self.depthImageCB)
+    def __init__(self, count=0):
+        rospy.Subscriber("/zed2/zed_node/left_raw/image_raw_color", Image, self.imageCB)
+        rospy.Subscriber("/zed2/zed_node/depth/depth_registered", Image, self.depthImageCB)
         self.ros_image = Image()
         self.ros_depth_image = Image()
-        self.count = 0
+        self.count = count
 
     def imageCB(self,image):
         self.ros_image = image
@@ -32,18 +33,22 @@ class ImageGenerator(object):
         cv2.imshow("Show Image", image)
         input_key = cv2.waitKey(0)
 
-    def convert_image(self):
+    def convert_image(self, object_name):
         bridge = CvBridge()
         # Use cv_bridge() to convert the ROS image to OpenCV format
         try:
+            # RGB Image
             color_image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
-            #Convert the depth image using the default passthrough encoding
-            depth_array = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
-            depth_image = np.array(depth_array, dtype=np.float32)
-            depth_image = depth_image/1500.0*255
-            cv2.imwrite(COLOR_PATH + "color_image_" + str(self.count) + ".png", color_image)
-            cv2.imwrite(DEPTH_PATH + "depth_image_" + str(self.count) + ".png", depth_image)
-            self.viewImage(depth_image/255)
+            color_image_path = SAVE_PATH + object_name + COLOR_PATH
+            self.viewImage(color_image)
+            cv2.imwrite(color_image_path + "color_image_" + str(self.count) + ".png", color_image)
+
+            # Depth Image
+            depth_image = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
+            depth_image_path = SAVE_PATH + object_name + DEPTH_PATH
+            cv2.imwrite(depth_image_path + "depth_image_" + str(self.count) + ".png", depth_image)
+            
+            self.viewImage(depth_image)
             self.count += 1
         except CvBridgeError, e:
             pass
@@ -52,8 +57,12 @@ class ImageGenerator(object):
 
 
 if __name__ == '__main__':
+    args = sys.argv
+    count = args[-1]
+
     rospy.init_node('ImageGenerator')
-    image_generator = ImageGenerator()
+
+    image_generator = ImageGenerator(int(count))
     while not rospy.is_shutdown():
         image_generator.convert_image()
     cv2.destroyAllWindows()
