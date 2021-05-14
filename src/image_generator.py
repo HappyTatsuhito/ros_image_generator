@@ -33,7 +33,7 @@ class ImageGenerator(object):
         cv2.imshow("Show Image", image)
         input_key = cv2.waitKey(0)
 
-    def convert_image(self, object_name):
+    def convert_image(self):
         bridge = CvBridge()
         # Use cv_bridge() to convert the ROS image to OpenCV format
         try:
