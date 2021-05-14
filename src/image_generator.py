@@ -39,13 +39,13 @@ class ImageGenerator(object):
         try:
             # RGB Image
             color_image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
-            color_image_path = SAVE_PATH + object_name + COLOR_PATH
+            color_image_path = SAVE_PATH + COLOR_PATH
             self.viewImage(color_image)
             cv2.imwrite(color_image_path + "color_image_" + str(self.count) + ".png", color_image)
 
             # Depth Image
             depth_image = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
-            depth_image_path = SAVE_PATH + object_name + DEPTH_PATH
+            depth_image_path = SAVE_PATH + DEPTH_PATH
             cv2.imwrite(depth_image_path + "depth_image_" + str(self.count) + ".png", depth_image)
             
             self.viewImage(depth_image)
