@@ -49,9 +49,9 @@ class ImageGenerator(object):
             depth_image = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
             depth_image_path = SAVE_PATH + DEPTH_PATH
             cv2.imwrite(depth_image_path + "depth_image_" + str(self.count) + ".png", depth_image)
-            print depth_image_path + "depth_image_" + str(self.count) + ".png"
+            print depth_image[370][667]
             
-            self.viewImage(depth_image/255)
+            self.viewImage(depth_image)
             self.count += 1
         except CvBridgeError, e:
             pass
