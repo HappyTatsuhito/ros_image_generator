@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image
 import numpy as np
 
 ###
-SAVE_PATH = "/home/demulab/makino/invisible_marker_data"
+SAVE_PATH = "/home/tatsuhito/invisible_marker_data"
 COLOR_PATH = "/rgb_imgs/"
 DEPTH_PATH = "/depth_imgs/"
 ###
