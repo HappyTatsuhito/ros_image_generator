@@ -13,8 +13,9 @@ def viewImage(image):
 if __name__ == '__main__':
     image_path = "/home/demulab/makino/invisible_marker_data/depth_imgs/"
 
-    image = cv2.imread(image_path+"depth_image_100.png", cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(image_path+"depth_image_0.png", cv2.IMREAD_GRAYSCALE)
     print image.shape
+    print image.dtype
     print np.amax(image)
     print np.amin(image)
     viewImage(image)

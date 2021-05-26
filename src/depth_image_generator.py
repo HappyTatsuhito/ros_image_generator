@@ -16,14 +16,10 @@ DEPTH_PATH = "/depth_imgs/"
 
 class ImageGenerator(object):
     def __init__(self, count=0):
-        rospy.Subscriber("/zed2/zed_node/left_raw/image_raw_color", Image, self.imageCB)
         rospy.Subscriber("/zed2/zed_node/depth/depth_registered", Image, self.depthImageCB)
         self.ros_image = Image()
         self.ros_depth_image = Image()
         self.count = count
-
-    def imageCB(self,image):
-        self.ros_image = image
 
     def depthImageCB(self,image):
         self.ros_depth_image = image
@@ -37,13 +33,6 @@ class ImageGenerator(object):
         bridge = CvBridge()
         # Use cv_bridge() to convert the ROS image to OpenCV format
         try:
-            # RGB Image
-            color_image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
-            color_image_path = SAVE_PATH + COLOR_PATH
-
-            cv2.imwrite(color_image_path + "color_image_" + str(self.count) + ".png", color_image)
-            self.viewImage(color_image)
-
             # Depth Image
             depth_image = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
             depth_image_path = SAVE_PATH + DEPTH_PATH
@@ -69,6 +58,9 @@ if __name__ == '__main__':
     rospy.init_node('ImageGenerator')
 
     image_generator = ImageGenerator(int(count))
+    test_image = np.full((720, 1280), 0)
+    test_image = test_image.astype(np.uint8)
+    image_generator.viewImage(test_image)
     while not rospy.is_shutdown():
         image_generator.convert_image()
     cv2.destroyAllWindows()
