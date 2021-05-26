@@ -17,15 +17,11 @@ if __name__ == '__main__':
     print image.shape
     print np.amax(image)
     print np.amin(image)
-    viewImage(image*255)
-    for i in range(180,530):
-        print image[i][600:800]
+    viewImage(image)
 
     image = cv2.imread(image_path+"depth_image_101.png", cv2.IMREAD_GRAYSCALE)
     print image.shape
     print image.dtype
     print np.amax(image)
     print np.amin(image)
-    viewImage(image*255)
-    for i in range(180,530):
-        print image[i][600:800]
+    viewImage(image)

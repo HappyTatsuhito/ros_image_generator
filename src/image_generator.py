@@ -40,7 +40,6 @@ class ImageGenerator(object):
             # RGB Image
             color_image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
             color_image_path = SAVE_PATH + COLOR_PATH
-            print color_image.shape
             self.viewImage(color_image)
             cv2.imwrite(color_image_path + "color_image_" + str(self.count) + ".png", color_image)
 
@@ -48,7 +47,10 @@ class ImageGenerator(object):
             depth_image = bridge.imgmsg_to_cv2(self.ros_depth_image, desired_encoding="passthrough")
             depth_image_path = SAVE_PATH + DEPTH_PATH
             depth_image = np.nan_to_num(depth_image)
-            print depth_image.shape
+            print depth_image[430][770]
+            depth_image *= 100
+            depth_image = depth_image.astype(np.uint8)
+            print depth_image[430][770]
             print np.amax(depth_image)
             print np.amin(depth_image)
             '''
