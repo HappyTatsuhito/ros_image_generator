@@ -20,7 +20,7 @@ if __name__ == '__main__':
     print np.amin(image)
     viewImage(image)
 
-    image = cv2.imread(image_path+"depth_image_101.png", cv2.IMREAD_GRAYSCALE)
+    image = cv2.imread(image_path+"depth_image_1.png", cv2.IMREAD_GRAYSCALE)
     print image.shape
     print image.dtype
     print np.amax(image)

@@ -8,7 +8,7 @@ import json
 import random
 import numpy as np
 sys.path.insert(0, "/usr/local/lib/python3.6/dist-packages/")
-from labelme.utils import shape as label_shape
+#from labelme.utils import shape as label_shape
 
 LOCATION_LIST = ["table", "shelf", "cupboard", "desk"]
 OBJECT_LIST = ["bikkle", "cup_noodle", "milk_tea", "pringles", "primitive", "potelong", "coffee", "cape", "unknowns"]
@@ -150,6 +150,12 @@ def shuffleDataset():
         ground_file_name = "left_groundTruth_" + file_number + ".png"
         os.system("cp " + destination_path + "groundTruth_store/" + ground_file_name + " " + destination_path + "left_groundTruth/left_groundTruth_" + str(count) + ".png")
         count += 1
+
+def packNumber():
+    reference_path = "/home/demulab/makino/invisible_marker_data/depth_imgs/"
+
+    for i in range(14):
+        os.system("mv "+reference_path+"depth_image_"+str(i+12)+".png "+reference_path+"depth_image_"+str(i+11)+".png")
         
 
 
@@ -158,6 +164,7 @@ if __name__ == '__main__':
     #generateJson()
     #generateMask()
     #createDataset()
-    shuffleDataset()
+    #shuffleDataset()
+    packNumber()
     print "Finish"
     
