@@ -7,15 +7,16 @@ import time
 import rospy
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
-import numpy as np
 
 SAVE_PATH = "~/rcap/dataset/"
 
 class ImageGenerator(object):
-    def __init__(self):
+    def __init__(self, count=0):
         rospy.Subscriber("/camera/color/image_raw", Image, self.imageCB)
         self.ros_image = Image()
-        self.count = 0
+        self.update_time = 0
+        self.dir_count = count
+        self.img_count = 0
 
     def imageCB(self,image):
         self.ros_image = image
@@ -32,19 +33,21 @@ class ImageGenerator(object):
 
         try:
             image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
-            cv2.imwrite(SAVE_PATH + "image_" + str(self.count) + ".png", image)
+            cv2.imwrite(SAVE_PATH + str(self.dir_count) + "/image_" + str(self.img_count) + ".png", image)
             #self.viewImage(image)
-            self.count += 1
+            self.img_count += 1
         except CvBridgeError, e:
             pass
 
 
 if __name__ == '__main__':
-    rospy.init_node('ImageGenerator')
-    image_generator = ImageGenerator()
+    args = sys.argv
+    count = args[-1]
 
+    rospy.init_node('ImageGenerator')
+
+    image_generator = ImageGenerator(int(count))
     while not rospy.is_shutdown():
         image_generator.convert_image()
-        print('ok')
         rospy.Rate(1/3.0).sleep()
     cv2.destroyAllWindows()
