@@ -7,18 +7,18 @@ import cv2
 import random
 import numpy as np
 
-reference_path = "/home/mimi/rcap/annotation/"
-destination_path = "/home/mimi/rcap/summary_dataset/"
+ref_path = '/home/mimi/rcap/annotation_file/'
+img_path = '/home/mimi/rcap/dataset/'
+dest_path = '/home/mimi/rcap/summary_dataset/'
 
 def createDataset():
-    count = 0
-    for dir_name in os.listdir(reference_path):
-        for file_name in os.listdir(reference_path+dir_name):
-            if file_name.split('.')[1] == 'txt': continue
-            txt_file = file_name.split('.')[0]+'.txt'
-            os.system("cp " + reference_path+dir_name+'/'+file_name + " " + destination_path + "image_" + str(count) + ".png")
-            os.system("cp " + reference_path+dir_name+'/'+txt_file + " " + destination_path + "image_" + str(count) + ".txt")
-            count += 1
+    for dir_name in os.listdir(ref_path):
+        print dir_name
+        for txt_name in os.listdir(ref_path+dir_name):
+            img_name = txt_name.split('.')[0] + '.png'
+            num = txt_name.split('.')[0].split('_')[1]
+            os.system('cp ' + ref_path+dir_name+'/'+txt_name + ' ' + dest_path+'image_'+str(dir_name)+'_'+num+'.txt')
+            os.system('cp ' + img_path+dir_name+'/'+img_name + ' ' + dest_path+'image_'+str(dir_name)+'_'+num+'.png')
 
 
 if __name__ == '__main__':
