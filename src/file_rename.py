@@ -7,7 +7,7 @@ import cv2
 import random
 import numpy as np
 
-reference_path = "/home/mimi/rcap/dataset/"
+reference_path = "/home/mimi/rcap/annotation/"
 destination_path = "/home/mimi/rcap/summary_dataset/"
 
 def createDataset():
