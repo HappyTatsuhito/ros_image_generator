@@ -8,11 +8,13 @@ import rospy
 from cv_bridge import CvBridge, CvBridgeError
 from sensor_msgs.msg import Image
 
-SAVE_PATH = "~/rcap/dataset/"
+#DIR_PATH = "~/Desktop/fluorescence_dataset/"
+DIR_PATH = "/home/tatsuhito/Desktop/fluorescence_dataset/"
+SLEEP_TIME = 1.0
 
 class ImageGenerator(object):
     def __init__(self, count=0):
-        rospy.Subscriber("/camera/color/image_raw", Image, self.imageCB)
+        rospy.Subscriber("/zed2/zed_node/rgb/image_rect_color", Image, self.imageCB)
         self.ros_image = Image()
         self.update_time = 0
         self.dir_count = count
@@ -28,12 +30,14 @@ class ImageGenerator(object):
         input_key = cv2.waitKey(0)
 
     def convert_image(self):
-        if time.time()-self.update_time > 3.0: return
+        if time.time()-self.update_time > SLEEP_TIME: return
         bridge = CvBridge()
 
         try:
             image = bridge.imgmsg_to_cv2(self.ros_image, desired_encoding="bgr8")
-            cv2.imwrite(SAVE_PATH + str(self.dir_count) + "/image_" + str(self.img_count) + ".png", image)
+            save_path = DIR_PATH + str(self.dir_count) + "/image_" + str(self.img_count) + ".png"
+            print save_path
+            cv2.imwrite(save_path, image)
             #self.viewImage(image)
             self.img_count += 1
         except CvBridgeError, e:
@@ -49,5 +53,5 @@ if __name__ == '__main__':
     image_generator = ImageGenerator(int(count))
     while not rospy.is_shutdown():
         image_generator.convert_image()
-        rospy.Rate(1/3.0).sleep()
+        rospy.Rate(1/SLEEP_TIME).sleep()
     cv2.destroyAllWindows()
